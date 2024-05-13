@@ -18,41 +18,26 @@ app.get("/", function (req, res) {
 });
 
 
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
-});
-
 app.get("/api", function(req, res) {
 
     let currDate = new Date();
-    let timestamp = currDate.getTime();
-    let dateString = currDate.toUTCString();
-
-    return res.json({unix: timestamp, utc: dateString});
+    return res.json({unix: currDate.getTime(), utc: currDate.toUTCString()});
 });
 
 app.get("/api/:date?", function(req, res) {
   try {
-    let date_string = req.params.date;
-    let dateObj;
-    let timestamp;
-    let dateString;
+    let dateObj = new Date(req.params.date);
 
-    if (!date_string.includes("-")) {
-      dateObj = new Date(parseInt(date_string));
+    if (dateObj.toUTCString() === "Invalid Date") {
+      dateObj = new Date(parseInt(req.params.date));
     }
     
-    else dateObj = new Date(date_string);
-    if (isNaN(dateObj.getTime())) throw "Invalid Date";
+    if (dateObj.toUTCString() === "Invalid Date") throw "Invalid Date";
 
-    timestamp = dateObj.getTime();
-    dateString = dateObj.toUTCString();
-
-    return res.json({unix: timestamp, utc: dateString});
+    return res.json({unix: dateObj.getTime(), utc: dateObj.toUTCString()});
   }
   catch(e) {
-    return res.json({ error : e });
+    return res.json({ error : e});
   }
  
 });
